@@ -1,0 +1,32 @@
+.pressure-container {
+    border: solid 1px white;
+    border-radius: 25px;
+    padding: 2em;
+    box-shadow: 0px 0px 20px black;
+    width: 80%;
+}
+
+h1 {
+}
+
+.pressure-params {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+    padding: 1em;
+}
+.pressure-params > * {
+    min-width: 150px;
+}
+input {
+    width: 100%;
+}
+
+.scroll-control {
+    display: flex;
+    margin: 1em;
+}
+.scroll-control p {
+    min-width: 200px;
+}

@@ -1,0 +1,3 @@
+/drop
+/add       cfd-viewer/src/App.tsx
+/add       cfd-viewer/src/components/PlotlyImshowPanel.tsx
