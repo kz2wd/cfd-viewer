@@ -100,7 +100,7 @@ export function Pressure() {
 
   const [timeIndex, setTimeIndex] = useState<number>(0);
   const [velocityOpacity, setVelocityOpacity] = useState<number>(0.4);
-  const [velocityLayer, setVelocityLayer] = useState<number>(0);
+  const [velocityLayer, setVelocityLayer] = useState<number>(7);
 
   const visuOptions = [
     { value: "contour", label: "Contour" },
@@ -119,7 +119,7 @@ export function Pressure() {
   useEffect(() => {
     async function load_pressure() {
       const { data, shape, fortranOrder } = await load(
-        "/data/wall_pressure_time.npy",
+        import.meta.env.BASE_URL + "data/wall_pressure_time.npy",
       );
       const pressure = reshape(data, shape, fortranOrder);
       setPressure(pressure);
@@ -134,7 +134,7 @@ export function Pressure() {
   useEffect(() => {
     async function loadVelocity() {
       const { data, shape, fortranOrder } = await load(
-        "/data/full_velocity_time.npy",
+        import.meta.env.BASE_URL + "data/full_velocity_time.npy",
       );
       const velocity = reshape(data, shape, fortranOrder);
       setChannelVelocity(velocity);

@@ -4,6 +4,6 @@ import babel from "@rolldown/plugin-babel";
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: "cfd-viewer",
+  base: "/cfd-viewer/",
   plugins: [react(), babel({ presets: [reactCompilerPreset()] })],
 });
