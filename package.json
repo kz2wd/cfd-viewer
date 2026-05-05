@@ -20,7 +20,7 @@
     "react-router-dom": "^7.14.2",
     "react-select": "^5.10.2",
     "regl": "^2.1.1",
-    "zarr": "^0.6.3"
+    "zarrita": "^0.7.3"
   },
   "devDependencies": {
     "@babel/core": "^7.29.0",

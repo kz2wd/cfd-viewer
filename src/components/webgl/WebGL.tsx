@@ -1,25 +1,23 @@
-import { useEffect, useRef, useState } from "react";
-import createREGL from "regl";
+import { useEffect, useRef } from "react";
+import { useReglSlice } from "./useReglSlice";
 
-function PressureCanvas() {
-  const containerRef = useRef<HTMLDivElement | null>(null);
+function FlowViewer() {
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
-  const [yPlus, setYPlus] = useState(0);
-  const [timeIdx, setTimeIdx] = useState(0);
+  const { loadTimeStep } = useReglSlice(
+    canvasRef,
+    "./data/simulation_export.zarr",
+  );
 
   useEffect(() => {
-    const regl = createREGL({
-      container: containerRef.current,
-    });
-    const gl = regl._gl;
-
-    const texture3D = gl.createTexture();
-    gl.bindTexture(gl.TEXTURE);
-  }, []);
+    loadTimeStep(0);
+  }, [loadTimeStep]);
 
   return (
     <>
-      <div ref={containerRef} />
+      <div>
+        <canvas ref={canvasRef} width={512} height={512} />
+      </div>
     </>
   );
 }
@@ -28,7 +26,7 @@ export function WebGL() {
   return (
     <>
       <h1>Web GL Pressure visualization</h1>
-      <PressureCanvas />
+      <FlowViewer />
     </>
   );
 }
