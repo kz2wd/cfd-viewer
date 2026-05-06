@@ -5,8 +5,9 @@ function FlowViewer() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   const { loadTimeStep } = useReglSlice(
+    1.0,
     canvasRef,
-    "./data/simulation_export.zarr",
+    new URL("/data/simulation_export.zarr", window.location.href).href,
   );
 
   useEffect(() => {
@@ -17,6 +18,7 @@ function FlowViewer() {
     <>
       <div>
         <canvas ref={canvasRef} width={512} height={512} />
+        <button onClick={() => loadTimeStep(10)}>Load 10</button>
       </div>
     </>
   );
