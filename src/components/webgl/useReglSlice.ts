@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import * as zarr from "zarrita";
 
@@ -126,22 +126,30 @@ export function useReglSlice(
 
     animFrameRef.current = requestAnimationFrame(draw);
 
-    return () => {};
+    return () => {
+      cancelAnimationFrame(animFrameRef.current);
+      gl.deleteProgram(prog);
+      gl.deleteShader(vert);
+      gl.deleteShader(frag);
+      gl.deleteBuffer(buf);
+      gl.deleteTexture(velocityTexRef.current);
+      gl.deleteTexture(pressureTexRef.current);
+    };
   }, [velMax, canvasRef]);
+
+  const [timesteps, setTimesteps] = useState(0);
 
   const loadTimeStep = useCallback(
     async (timeIdx: number) => {
       const gl = glRef.current;
-      console.log(gl);
-      console.log(pressureTexRef);
-      console.log(velocityTexRef);
       if (!gl || !pressureTexRef || !velocityTexRef) return;
 
       const store = zarr.root(new zarr.FetchStore(zarrUrl));
       const velocity = await zarr.open(store.resolve("velocity_TXZY_uvwq"), {
         kind: "array",
       });
-      const [, Nx, Nz, Ny] = velocity.shape;
+      const [timesteps, Nx, Nz, Ny] = velocity.shape;
+      setTimesteps(timesteps);
       const velChunk = await zarr.get(velocity, [
         timeIdx,
         null,
@@ -189,5 +197,13 @@ export function useReglSlice(
     [zarrUrl],
   );
 
-  return { loadTimeStep };
+  const setYPlus = useCallback((v) => {
+    propsRef.current.yplus = v;
+  }, []);
+
+  const setThreshold = useCallback((v) => {
+    propsRef.current.threshold = v;
+  }, []);
+
+  return { loadTimeStep, timesteps, setYPlus, setThreshold };
 }
