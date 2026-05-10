@@ -80,3 +80,8 @@
 h1 {
     line-height: 1.2;
 }
+
+flex {
+    display: flex;
+    flex-direction: row;
+}
