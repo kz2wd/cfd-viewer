@@ -1,10 +1,20 @@
 import { useEffect, useRef, useState } from "react";
-import { useReglSlice } from "./useWebglSlice";
+import { useWebglSlice } from "./useWebglSlice";
 
 import Select from "react-select";
 
+import "./webgl.css";
+import { ShaderProps } from "./shaderProps";
+import { ContourParamsComponent } from "./ContourParams";
+
 function FlowViewer() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const shaderProps = new ShaderProps();
+  const propsRef = useRef<ShaderProps>(shaderProps);
+
+  const velocityContourRef = useRef(shaderProps.velocityContour);
+  const pressureContourRef = useRef(shaderProps.pressureContour);
+  const qContourRef = useRef(shaderProps.qContour);
 
   const r8Format = {
     gpu_format: WebGL2RenderingContext.R8,
@@ -54,11 +64,12 @@ function FlowViewer() {
     },
   ];
 
-  const [dataSource, setDataSource] = useState(dataSourceOptions[0]);
+  const [dataSource, setDataSource] = useState(dataSourceOptions[1]);
 
-  const { loadTimeStep, timesteps, setYPlus, setOpacity } = useReglSlice(
+  const { loadTimeStep, timesteps } = useWebglSlice(
     255.0,
     canvasRef,
+    propsRef,
     dataSource.value,
   );
 
@@ -71,43 +82,55 @@ function FlowViewer() {
       <div>
         <div className="flex">
           <p>Data Source</p>
-          <Select
-            options={dataSourceOptions}
-            onChange={(choice) => setDataSource(choice)}
-            value={dataSource}
-          />
+          <div className="selector">
+            <Select
+              options={dataSourceOptions}
+              onChange={(choice) => setDataSource(choice)}
+              value={dataSource}
+            />
+          </div>
         </div>
 
-        <canvas ref={canvasRef} width={1024} height={512} />
-        <div className="">
-          <p>Timestep</p>
-          <input
-            type="range"
-            min={0.0}
-            max={timesteps - 1}
-            step={1.0}
-            onChange={(e) => loadTimeStep(Number(e.target.value))}
-          />
+        <div className="flex">
+          <div>
+            <canvas ref={canvasRef} width={1024} height={512} />
+            <div className="">
+              <input
+                type="range"
+                min={0.0}
+                max={timesteps - 1}
+                step={1.0}
+                onChange={(e) => loadTimeStep(Number(e.target.value))}
+              />
+              <p>Timestep</p>
+            </div>
+          </div>
+
+          <div className="">
+            <input
+              className="vertical"
+              type="range"
+              min={0.0}
+              max={1.0}
+              step={0.01}
+              onChange={(e) =>
+                (propsRef.current.yplus = Number(e.target.value))
+              }
+            />
+            <p>y+</p>
+          </div>
         </div>
-        <div className="">
-          <p>y+</p>
-          <input
-            type="range"
-            min={0.0}
-            max={1.0}
-            step={0.01}
-            onChange={(e) => setYPlus(Number(e.target.value))}
+
+        <div className="flex">
+          <ContourParamsComponent
+            name={"Velocity Contour"}
+            contourRef={velocityContourRef}
           />
-        </div>
-        <div className="">
-          <p>Opacity</p>
-          <input
-            type="range"
-            min={0.0}
-            max={1.0}
-            step={0.01}
-            onChange={(e) => setOpacity(Number(e.target.value))}
+          <ContourParamsComponent
+            name={"Pressure Contour"}
+            contourRef={pressureContourRef}
           />
+          <ContourParamsComponent name={"Q Contour"} contourRef={qContourRef} />
         </div>
       </div>
     </>

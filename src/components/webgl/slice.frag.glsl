@@ -12,9 +12,19 @@ uniform sampler2D u_pressure_colormap;
 
 uniform float u_yplus;
 
-uniform float u_opacity;
-
 uniform float u_vel_max;
+
+uniform bool u_vel_cont_enabled;
+uniform float u_vel_cont_value;
+uniform float u_vel_cont_range;
+
+uniform bool u_pre_cont_enabled;
+uniform float u_pre_cont_value;
+uniform float u_pre_cont_range;
+
+uniform bool u_q_cont_enabled;
+uniform float u_q_cont_value;
+uniform float u_q_cont_range;
 
 in vec2 vUV;
 out vec4 fragColor;
@@ -31,8 +41,33 @@ void main() {
 
     vec4 pressure_color = texture(u_pressure_colormap, vec2(0.0, pressure));
 
-    fragColor = velocity_color * u_opacity + pressure_color * (1.0 - u_opacity);
+    vec4 q_color = texture(u_velocity_colormap, vec2(0.0, q));
 
+    fragColor = vec4(0.1, 0.1, 0.1, 1.0);
+
+    if (u_vel_cont_enabled) {
+        if (abs(length(velocity) - u_vel_cont_value) < u_vel_cont_range) {
+            fragColor = velocity_color;
+        }
+    }
+
+    if (u_pre_cont_enabled) {
+        if (abs(pressure - u_pre_cont_value) < u_pre_cont_range) {
+            fragColor = pressure_color;
+        }
+    }
+
+    if (u_q_cont_enabled) {
+        if (abs(q - u_q_cont_value) < u_q_cont_range) {
+            fragColor = q_color;
+        }
+    }
+
+    if (!u_vel_cont_enabled && !u_pre_cont_enabled && !u_q_cont_enabled) {
+        fragColor = q_color;
+    }
+
+    // fragColor = velocity_color;
     // vec3 u = (velocity * 2.0 - 1.0) * u_vel_max;
 
     // float norm = length(u);

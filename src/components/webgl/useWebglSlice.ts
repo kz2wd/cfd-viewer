@@ -5,10 +5,12 @@ import * as zarr from "zarrita";
 import vertSrc from "./slice.vert.glsl";
 import fragSrc from "./slice.frag.glsl";
 import type { WebGlData } from "../../types/webgl";
+import type { ShaderProps } from "./shaderProps";
 
-export function useReglSlice(
+export function useWebglSlice(
   velMax: number,
   canvasRef: React.RefObject<HTMLCanvasElement>,
+  propsRef: React.RefObject<ShaderProps>,
   webglData: WebGlData,
 ) {
   const glRef = useRef<WebGL2RenderingContext | null>(null);
@@ -17,11 +19,6 @@ export function useReglSlice(
   const velocityColormapTexRef = useRef<WebGLTexture | null>(null);
   const pressureColormapTexRef = useRef<WebGLTexture | null>(null);
   const animFrameRef = useRef<number | null>(null);
-
-  const propsRef = useRef<{ yplus: number; opacity: number }>({
-    yplus: 0.1,
-    opacity: 0.05,
-  });
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -104,12 +101,20 @@ export function useReglSlice(
     const posLoc = gl.getAttribLocation(prog, "position");
     const locs = {
       yplus: gl.getUniformLocation(prog, "u_yplus"),
-      opacity: gl.getUniformLocation(prog, "u_opacity"),
       velMax: gl.getUniformLocation(prog, "u_vel_max"),
       velocity: gl.getUniformLocation(prog, "u_velocity"),
       pressure: gl.getUniformLocation(prog, "u_pressure"),
       velocityColormap: gl.getUniformLocation(prog, "u_velocity_colormap"),
       pressureColormap: gl.getUniformLocation(prog, "u_pressure_colormap"),
+      velocityContourEnabled: gl.getUniformLocation(prog, "u_vel_cont_enabled"),
+      velocityContourValue: gl.getUniformLocation(prog, "u_vel_cont_value"),
+      velocityContourRange: gl.getUniformLocation(prog, "u_vel_cont_range"),
+      pressureContourEnabled: gl.getUniformLocation(prog, "u_pre_cont_enabled"),
+      pressureContourValue: gl.getUniformLocation(prog, "u_pre_cont_value"),
+      pressureContourRange: gl.getUniformLocation(prog, "u_pre_cont_range"),
+      qContourEnabled: gl.getUniformLocation(prog, "u_q_cont_enabled"),
+      qContourValue: gl.getUniformLocation(prog, "u_q_cont_value"),
+      qContourRange: gl.getUniformLocation(prog, "u_q_cont_range"),
     };
 
     gl.useProgram(prog);
@@ -141,7 +146,42 @@ export function useReglSlice(
 
       // set uniforms
       gl.uniform1f(locs.yplus, propsRef.current.yplus);
-      gl.uniform1f(locs.opacity, propsRef.current.opacity);
+
+      // Velocity Contour
+      gl.uniform1i(
+        locs.velocityContourEnabled,
+        propsRef.current.velocityContour.enabled ? 1 : 0,
+      );
+      gl.uniform1f(
+        locs.velocityContourValue,
+        propsRef.current.velocityContour.value,
+      );
+      gl.uniform1f(
+        locs.velocityContourRange,
+        propsRef.current.velocityContour.range,
+      );
+
+      // Pressure Contour
+      gl.uniform1i(
+        locs.pressureContourEnabled,
+        propsRef.current.pressureContour.enabled ? 1 : 0,
+      );
+      gl.uniform1f(
+        locs.pressureContourValue,
+        propsRef.current.pressureContour.value,
+      );
+      gl.uniform1f(
+        locs.pressureContourRange,
+        propsRef.current.pressureContour.range,
+      );
+
+      // Q Contour
+      gl.uniform1i(
+        locs.qContourEnabled,
+        propsRef.current.qContour.enabled ? 1 : 0,
+      );
+      gl.uniform1f(locs.qContourValue, propsRef.current.qContour.value);
+      gl.uniform1f(locs.qContourRange, propsRef.current.qContour.range);
 
       // Draw quad
       gl.bindBuffer(gl.ARRAY_BUFFER, buf);
@@ -166,7 +206,7 @@ export function useReglSlice(
       gl.deleteTexture(velocityColormapTexRef.current);
       gl.deleteTexture(pressureColormapTexRef.current);
     };
-  }, [velMax, canvasRef]);
+  }, [velMax, canvasRef, propsRef]);
 
   // Load colormap
   async function loadColormap(
@@ -274,13 +314,5 @@ export function useReglSlice(
     [webglData],
   );
 
-  const setYPlus = useCallback((v) => {
-    propsRef.current.yplus = v;
-  }, []);
-
-  const setOpacity = useCallback((v) => {
-    propsRef.current.opacity = v;
-  }, []);
-
-  return { loadTimeStep, timesteps, setYPlus, setOpacity };
+  return { loadTimeStep, timesteps };
 }
