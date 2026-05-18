@@ -297,6 +297,18 @@ export function useWebglSlice(
       const [, px, pz] = pressure.shape;
       const pressureChunk = await zarr.get(pressure, [timeIdx, null, null]);
       const pressureData = pressureChunk.data;
+      console.log(pressureData);
+      console.log(px, pz);
+      console.log("Pressure shape:", pressure.shape);
+      console.log("Time index:", timeIdx);
+      console.log("Chunk requested:", [timeIdx, null, null]);
+      console.log("Chunk result:", pressureChunk);
+      console.log(
+        "Full pressure min/max:",
+        Math.min(...pressureData),
+
+        Math.max(...pressureData),
+      );
       gl.bindTexture(gl.TEXTURE_2D, pressureTexRef.current);
       gl.texImage2D(
         gl.TEXTURE_2D,

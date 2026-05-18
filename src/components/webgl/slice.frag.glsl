@@ -31,7 +31,7 @@ out vec4 fragColor;
 
 void main() {
     vec3 uvw = vec3(vUV, u_yplus);
-    float pressure = (texture(u_pressure, vUV).r + 1.0) / 2.0;
+    float pressure = texture(u_pressure, vUV).g;
     vec4 txt_sample = texture(u_velocity, uvw);
 
     vec3 velocity = txt_sample.rgb;
@@ -67,7 +67,6 @@ void main() {
         fragColor = q_color;
     }
 
-    // fragColor = velocity_color;
     // vec3 u = (velocity * 2.0 - 1.0) * u_vel_max;
 
     // float norm = length(u);

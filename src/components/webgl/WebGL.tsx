@@ -56,6 +56,14 @@ function FlowViewer() {
     },
     {
       value: {
+        path: "/data/cans_simulation_export.zarr",
+        pressure_format: r8Format,
+        velocity_format: rgba8Format,
+      },
+      label: "CaNS",
+    },
+    {
+      value: {
         path: "/data/simulation_export_f32.zarr",
         pressure_format: rf32Format,
         velocity_format: f32Format,

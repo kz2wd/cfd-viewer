@@ -2,7 +2,7 @@ export class ContourParams {
   constructor(
     public enabled: boolean = false,
     public value: number = 0.0,
-    public range: number = 0.0,
+    public range: number = 1.0,
   ) {}
 }
 
@@ -44,7 +44,7 @@ export function ContourParamsComponent({
             min={0.0}
             max={1.0}
             step={0.01}
-            defaultValue={0.0}
+            defaultValue={1.0}
             onChange={(e) =>
               (contourRef.current.range = Number(e.target.value))
             }
