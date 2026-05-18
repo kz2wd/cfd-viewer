@@ -40,7 +40,7 @@ function FlowViewer() {
   const dataSourceOptions = [
     {
       value: {
-        path: "/data/simulation_export.zarr",
+        path: import.meta.env.BASE_URL + "/data/simulation_export.zarr",
         pressure_format: r8Format,
         velocity_format: rgba8Format,
       },
@@ -48,7 +48,7 @@ function FlowViewer() {
     },
     {
       value: {
-        path: "/data/simulation_export_normzd.zarr",
+        path: import.meta.env.BASE_URL + "/data/simulation_export_normzd.zarr",
         pressure_format: r8Format,
         velocity_format: rgba8Format,
       },
@@ -56,7 +56,7 @@ function FlowViewer() {
     },
     {
       value: {
-        path: "/data/cans_simulation_export.zarr",
+        path: import.meta.env.BASE_URL + "/data/cans_simulation_export.zarr",
         pressure_format: r8Format,
         velocity_format: rgba8Format,
       },
@@ -64,7 +64,7 @@ function FlowViewer() {
     },
     {
       value: {
-        path: "/data/simulation_export_f32.zarr",
+        path: import.meta.env.BASE_URL + "/data/simulation_export_f32.zarr",
         pressure_format: rf32Format,
         velocity_format: f32Format,
       },
